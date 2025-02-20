@@ -1,0 +1,78 @@
+1. Prisma CLI
+A Prisma CLI (npx prisma) é a ferramenta principal para interagir com o Prisma. Aqui estão os comandos mais comuns:
+
+	*npx prisma init: Inicializa o Prisma em um projeto, criando a pasta prisma e o arquivo schema.prisma.
+	*
+	*npx prisma generate: Gera o Prisma Client com base no schema definido em schema.prisma. Esse comando deve ser executado sempre que o schema é alterado.
+	*
+	*npx prisma migrate dev: Cria e aplica uma nova migração ao banco de dados com base nas mudanças no schema. Este comando também atualiza o banco de dados durante o desenvolvimento.
+	*
+	*npx prisma migrate deploy: Aplica todas as migrações pendentes ao banco de dados em um ambiente de produção.
+	*
+	*npx prisma migrate reset: Reseta o banco de dados, removendo todas as tabelas e reaplicando as migrações. Útil durante o desenvolvimento.
+	*
+	*npx prisma db push: Sincroniza o banco de dados com o schema Prisma, sem criar uma migração. Este comando é útil para prototipagem rápida.
+	*
+	*npx prisma db seed: Roda scripts de seeding para popular o banco de dados com dados iniciais. Requer a configuração de um arquivo seed no projeto.
+	*
+	*npx prisma db pull: Importa o schema do banco de dados atual para o arquivo schema.prisma. Útil para começar um novo projeto com um banco de dados existente.
+	*
+	*npx prisma studio: Abre o Prisma Studio, uma interface gráfica para gerenciar dados no banco de dados.
+	*
+	*npx prisma format: Formata o arquivo schema.prisma para manter a consistência de estilo.
+
+2. Prisma Client
+O Prisma Client é o componente gerado pelo comando npx prisma generate. Ele permite interagir com o banco de dados usando JavaScript/TypeScript. Exemplos de métodos comuns incluem:
+
+	*prisma.user.findMany(): Retorna múltiplos registros da tabela User.
+	*
+	*prisma.user.create(): Cria um novo registro na tabela User.
+	*
+	*prisma.user.update(): Atualiza um registro existente na tabela User.
+	*
+	*prisma.user.delete(): Deleta um registro da tabela User.
+	*
+	*prisma.user.findUnique(): Retorna um único registro com base em um identificador único.
+
+3. Prisma Migrate
+O Prisma Migrate é a ferramenta de migração de banco de dados. Ele gera e aplica migrações baseadas no schema.prisma.
+
+	*prisma migrate dev: Cria migrações durante o desenvolvimento.
+	*
+	*prisma migrate deploy: Aplica migrações em produção.
+	*
+	*prisma migrate reset: Reseta o banco de dados e reaplica as migrações.
+
+4. Prisma Studio
+O Prisma Studio é uma interface gráfica para visualizar e editar dados no banco de dados.
+
+	*npx prisma studio: Abre o Prisma Studio no navegador.
+5. Configuração
+O arquivo schema.prisma é onde você define o modelo de dados e a conexão com o banco de dados.
+
+Exemplo básico de schema.prisma:
+
+	generator client {
+	  provider = "prisma-client-js"
+	}
+
+	datasource db {
+	  provider = "mysql"
+	  url      = env("DATABASE_URL")
+	}
+
+	model User {
+	  id    Int     @id @default(autoincrement())
+	  name  String
+	  email String  @unique
+	  posts Post[]
+	}
+
+	model Post {
+	  id     Int     @id @default(autoincrement())
+	  title  String
+	  content String
+	  author  User   @relation(fields: [authorId], references: [id])
+	  authorId Int
+	}
+Com esses comandos e configurações, você pode configurar, migrar, gerenciar e interagir com o banco de dados de forma eficiente usando o Prisma ORM.

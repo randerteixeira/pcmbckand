@@ -12,26 +12,108 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
-enum Role{
+
+enum Role {
   USER
   ADMIN
 }
+
+
+// CADASTRO DE USUÁRIOS E SEUS NÍVEIS DE ACESSO
 model User {
   id        Int      @id @default(autoincrement())
   status    Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updateAt  DateTime @default(now()) @updatedAt
-  role      Role     @default(USER)
   name      String
-  email     String   @unique
-  posts     Post[]
+  role      Role     @default(USER)
+  subname   String
+  username  String   @unique
+  email     String   @unique  
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cargoId   Int
+  levelId   Int
+  cargo     Cargo    @relation(fields: [cargoId], references: [id])
+  level     Level   @relation(fields:[levelId], references: [id])
+  
 }
 
-model Post {
-  id       Int     @id @default(autoincrement())
-  title    String
-  subtitle String?
-  body     String
-  authorId Int
-  author   User    @relation(fields: [authorId], references: [id])
+model Cargo {
+  id       Int    @id @default(autoincrement())
+  descargo String 
+  cdcargo  String
+  users    User[]
+}
+
+model Level {
+  id       Int    @id @default(autoincrement())
+  deslevel String
+  cdlevel  String
+  users   User[]
+}
+
+// CADASTRO DE EQUIPAMENTOS , SEUS STATUS E LOCALIZAÇÃO
+model Ativos {
+  id       Int      @id @default(autoincrement())
+  desativo String
+  cdativo  String
+  linhaId  Int
+  setorId  Int
+  statusId Int
+  cdstatus String
+  linha    Linha    @relation(fields: [linhaId], references: [id])
+  setor    Setor    @relation(fields: [setorId], references: [id])
+  status   Status   @relation(fields: [statusId], references: [id])
+  pecas    Pecas[]
+
+}
+model Setor{
+  id       Int      @id @default(autoincrement())
+  desetor  String
+  cdsetor  String
+  ativos   Ativos[]
+}
+model Linha{
+  id       Int      @id @default(autoincrement())
+  deslinha  String
+  cdlinha  String
+  ativos   Ativos[]
+}
+model Status{
+  id       Int      @id @default(autoincrement())
+  cdstatus  String
+  ativos   Ativos[]
+}
+
+// CADASTRO DE PEÇAS E SEUS FORNECEDORES
+model Pecas {
+  id       Int      @id @default(autoincrement())
+  despeca  String
+  cdpeca   String
+  qtarmazen Int
+  custo    Float
+  endarmazen String
+  ativoId  Int
+  ativo   Ativos  @relation(fields: [ativoId], references: [id])
+  fornecedorId Int
+  fornecedor Fornecedor @relation(fields: [fornecedorId], references: [id])
+}
+model Fornecedor {
+  id       Int      @id @default(autoincrement())
+  cnpj     String
+  razaosocial String
+  nomefantasia String
+  email    String
+  telefone String
+  telefone2 String
+  cep      String
+  endereco String
+  numero   String
+  bairro   String
+  cidade   String
+  estado   String
+  desfornecedor  String
+  cdfornecedor   String
+  pecas    Pecas[]
+  
 }

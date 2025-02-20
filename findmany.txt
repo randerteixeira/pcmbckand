@@ -1,0 +1,228 @@
+Find many
+
+1. Where (where)
+Filtra registros que correspondem a critérios específicos.
+
+
+	const users = await prisma.user.findMany({
+	  where: {
+		name: { contains: 'John' }, // Nome contém 'John'
+		age: { gte: 18 }, // Idade maior ou igual a 18
+		email: { endsWith: '@example.com' }, // Email termina com '@example.com'
+		AND: [ // Combina múltiplas condições (todas devem ser verdadeiras)
+		  { isActive: true }, // Usuário está ativo
+		  { role: 'USER' }, // Papel é 'USER'
+		],
+		OR: [ // Combina múltiplas condições (uma delas deve ser verdadeira)
+		  { role: 'ADMIN' },
+		  { role: 'MODERATOR' }
+		]
+	  }
+	});
+	
+	
+2. Select (select)
+Especifica quais campos devem ser retornados na consulta.
+
+	const users = await prisma.user.findMany({
+	  select: {
+		id: true, // Retorna o campo `id`
+		name: true, // Retorna o campo `name`
+		email: true, // Retorna o campo `email`
+	  }
+	});
+	
+	
+3. Include (include)
+Inclui registros relacionados (relacionamentos) na consulta.
+
+
+	const users = await prisma.user.findMany({
+	  include: {
+		posts: { // Inclui os posts relacionados ao usuário
+		  select: {
+			title: true, // Seleciona apenas o título dos posts
+			content: true // Seleciona apenas o conteúdo dos posts
+		  }
+		},
+		profile: true // Inclui o perfil relacionado ao usuário
+	  }
+	});
+	
+	
+4. Order By (orderBy)
+Ordena os registros com base em um ou mais campos.
+
+
+	const users = await prisma.user.findMany({
+	  orderBy: {
+		name: 'asc', // Ordena por nome em ordem ascendente
+		age: 'desc', // Em caso de empate, ordena por idade em ordem descendente
+	  }
+	});
+	
+	
+5. Skip (skip)
+Pula um número específico de registros. Útil para paginação.
+
+
+	const users = await prisma.user.findMany({
+	  skip: 10, // Pula os primeiros 10 registros
+	});
+	
+	
+	
+	
+6. Take (take)
+Limita o número de registros retornados. Também é útil para paginação.
+
+
+
+
+		const users = await prisma.user.findMany({
+		  take: 5, // Retorna apenas os primeiros 5 registros
+		});
+		
+		
+7. Distinct (distinct)
+Retorna registros únicos com base em um ou mais campos.
+
+
+		const users = await prisma.user.findMany({
+		  distinct: ['email'], // Retorna registros únicos com base no campo `email`
+		});
+		
+		
+Exemplo Completo Integrando Todos os Filtros:
+
+
+
+		const users = await prisma.user.findMany({
+		  where: {
+			name: { startsWith: 'A' },
+			age: { lte: 30 },
+			email: { contains: '@domain.com' },
+			isActive: true,
+			OR: [
+			  { role: 'USER' },
+			  { role: 'ADMIN' }
+			]
+		  },
+		  select: {
+			id: true,
+			name: true,
+			email: true,
+		  },
+		  include: {
+			posts: {
+			  select: {
+				title: true,
+				createdAt: true
+			  }
+			},
+			profile: true
+		  },
+		  orderBy: {
+			createdAt: 'desc',
+		  },
+		  skip: 20,
+		  take: 10,
+		  distinct: ['email'],
+		});
+		
+Esse exemplo final demonstra como combinar vários filtros e opções em uma única consulta complexa.
+
+
+
+1. Equals
+Retorna registros onde o valor de um campo é exatamente igual ao especificado.
+
+		const users = await prisma.user.findMany({
+		  where: {
+			role: { equals: 'ADMIN' } // Retorna usuários cujo papel é exatamente 'ADMIN'
+		  }
+		});
+		
+		
+2. Contains
+Retorna registros onde o valor de um campo contém uma substring específica.
+
+		const users = await prisma.user.findMany({
+		  where: {
+			name: { contains: 'John' } // Retorna usuários cujo nome contém 'John'
+		  }
+		});
+		
+		
+3. StartsWith / EndsWith
+Retorna registros onde o valor de um campo começa ou termina com uma substring específica.
+
+		const users = await prisma.user.findMany({
+		  where: {
+			email: { startsWith: 'admin@' } // Retorna usuários cujo email começa com 'admin@'
+		  }
+		});
+
+		const users = await prisma.user.findMany({
+		  where: {
+			email: { endsWith: '@example.com' } // Retorna usuários cujo email termina com '@example.com'
+		  }
+		});
+		
+		
+4. GT / GTE (Greater Than / Greater Than or Equal)
+Retorna registros onde o valor de um campo é maior ou maior ou igual ao especificado.
+
+
+		const users = await prisma.user.findMany({
+		  where: {
+			age: { gt: 18 } // Retorna usuários cuja idade é maior que 18
+		  }
+		});
+
+		const users = await prisma.user.findMany({
+		  where: {
+			age: { gte: 18 } // Retorna usuários cuja idade é maior ou igual a 18
+		  }
+		});
+		
+		
+5. LT / LTE (Less Than / Less Than or Equal)
+Retorna registros onde o valor de um campo é menor ou menor ou igual ao especificado.
+
+
+
+		const users = await prisma.user.findMany({
+		  where: {
+			age: { lt: 30 } // Retorna usuários cuja idade é menor que 30
+		  }
+		});
+
+		const users = await prisma.user.findMany({
+		  where: {
+			age: { lte: 30 } // Retorna usuários cuja idade é menor ou igual a 30
+		  }
+		});
+		
+		
+6. IN
+Retorna registros onde o valor de um campo está dentro de uma lista de valores especificados.
+
+
+		const users = await prisma.user.findMany({
+		  where: {
+			role: { in: ['USER', 'ADMIN'] } // Retorna usuários cujo papel é 'USER' ou 'ADMIN'
+		  }
+		});
+		
+		
+7. NotIn
+Retorna registros onde o valor de um campo não está dentro de uma lista de valores especificados.
+
+		const users = await prisma.user.findMany({
+		  where: {
+			role: { notIn: ['GUEST', 'BANNED'] } // Retorna usuários cujo papel não é 'GUEST' nem 'BANNED'
+		  }
+		});
+		
+Esses exemplos mostram como aplicar cada um desses operadores para filtrar os dados de maneira precisa com Prisma.
