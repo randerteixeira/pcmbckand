@@ -15,8 +15,8 @@ export const  createdUser = async(data:Prisma.UserCreateInput)=>{
 
 }
 
-export const createUser = async(users:Prisma.UserCreateInput[])=>{
-
+export const createUser = async(users:Prisma.UserCreateManyInput[])=>{
+    users=[]
     try {
         return await prisma.user.createMany({
             data:users,
